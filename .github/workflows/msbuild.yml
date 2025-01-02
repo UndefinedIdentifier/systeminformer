@@ -7,7 +7,9 @@ on:
     branches: [ "master" ]
 
   workflow_dispatch:
-
+  release:
+    types: [created]  # 确保在 Release 创建时触发工作流
+    
 permissions:
   contents: read
   actions: write
