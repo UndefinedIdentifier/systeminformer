@@ -12,6 +12,19 @@ permissions:
   contents: write
   
 jobs:
+  tag:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create tag and push
+        run: |
+          TAG_NAME="v1.0.1"  # 指定要打的 tag 名称
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
   build:
     runs-on: windows-latest
     steps:
