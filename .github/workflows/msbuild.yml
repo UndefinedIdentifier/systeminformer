@@ -16,17 +16,17 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-#    - name: Build Init
-#      shell: cmd
-#      working-directory: ${{github.workspace}}
-#      run: build\build_init.cmd
+      - name: Build Init
+        shell: cmd
+        working-directory: ${{github.workspace}}
+        run: build\build_init.cmd
 #    - name: Build Solution
 #      shell: cmd
 #      working-directory: ${{github.workspace}}
 #      run: build\build_verbose.cmd
       - name: Package Artifacts
         working-directory: ${{github.workspace}}
-        run: tar -czvf artifact_build.tar.gz ${{github.workspace}}/tool
+        run: tar -czvf artifact_build.tar.gz ./tool
 
 
       - name: Release111
