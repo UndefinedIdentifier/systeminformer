@@ -18,18 +18,17 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install Nuget Packages
       run: nuget restore .\packages.config -PackagesDirectory .\packages\
-    - name: Build Init
-      shell: cmd
-      working-directory: ${{github.workspace}}
-      run: build\build_init.cmd
-    - name: Build Solution
-      shell: cmd
-      working-directory: ${{github.workspace}}
-      run: build\build_verbose.cmd
+#    - name: Build Init
+#      shell: cmd
+#      working-directory: ${{github.workspace}}
+#      run: build\build_init.cmd
+#    - name: Build Solution
+#      shell: cmd
+#      working-directory: ${{github.workspace}}
+#      run: build\build_verbose.cmd
     - name: Package Artifacts
-      shell: cmd
       working-directory: ${{github.workspace}}
-      run: build\package_artifacts.cmd
+      run: tar -czvf artifact_build.tar.gz ${{github.workspace}}/tools
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
@@ -38,32 +37,4 @@ jobs:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: ./path/to/artifact_build.zip
         asset_name: artifact_build.zip
-        asset_content_type: application/zip
-
-  build_driver:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install Nuget Packages
-      run: nuget restore .\packages.config -PackagesDirectory .\packages\
-    - name: Build Tools
-      shell: cmd
-      working-directory: ${{github.workspace}}
-      run: build\build_tools.cmd
-    - name: Build Driver
-      shell: cmd
-      working-directory: ${{github.workspace}}
-      run: build\build_zdriver.cmd prefast
-    - name: Package Driver Artifacts
-      shell: cmd
-      working-directory: ${{github.workspace}}
-      run: build\package_driver_artifacts.cmd
-    - name: Upload Driver Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./path/to/artifact_driver.zip
-        asset_name: artifact_driver.zip
         asset_content_type: application/zip
