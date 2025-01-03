@@ -15,9 +15,6 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Install Nuget Packages
-      run: nuget restore .\packages.config -PackagesDirectory .\packages\
 #    - name: Build Init
 #      shell: cmd
 #      working-directory: ${{github.workspace}}
@@ -29,6 +26,17 @@ jobs:
     - name: Package Artifacts
       working-directory: ${{github.workspace}}
       run: tar -czvf artifact_build.tar.gz ${{github.workspace}}/tools
+    - name: Get Release URL
+      id: get_release
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const release = await github.repos.getLatestRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          });
+          return release.data.upload_url;
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
