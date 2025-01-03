@@ -15,26 +15,59 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-
-#    - name: Build Solution
-#      shell: cmd
-#      working-directory: ${{github.workspace}}
-#      run: build\build_verbose.cmd
-      - name: Package Artifacts
-        working-directory: ${{github.workspace}}
-        run: tar -czf build_driver_artifacts.tar.gz -C ${{github.workspace}}/phnt . 
-
-
-      - name: Release111
-        uses: softprops/action-gh-release@v1
-        # if: startsWith(github.ref, 'refs/tags/')
-        with:
-          token: ${{ secrets.ACCESS_TOKEN }}
-          tag_name: prebuild_driver
-          name: "11111"
-          body: 由提交${{ github.sha }}自动触发编译生成的Release。
-          draft: false
-          prerelease: false
-          files: |
-            artifact_build.tar.gz
+    - uses: actions/checkout@v4
+    - name: Install Nuget Packages
+      run: nuget restore .\packages.config -PackagesDirectory .\packages\
+    - name: Build Init
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_init.cmd
+    - name: Build Solution
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_verbose.cmd
+    - name: Package Artifacts
+      working-directory: ${{github.workspace}}
+      run: tar -czf build_artifacts.tar.gz -C ${{github.workspace}}/bin .
+    - name: BuildRelease
+      uses: softprops/action-gh-release@v1
+      # if: startsWith(github.ref, 'refs/tags/')
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        tag_name: build
+        name: "build"
+        body: 由 ${{ github.sha }}触发编译生成的Release。
+        draft: false
+        prerelease: false
+        files: |
+        build_artifacts.tar.gz  
+        
+  build_driver:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Nuget Packages
+      run: nuget restore .\packages.config -PackagesDirectory .\packages\
+    - name: Build Tools
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_tools.cmd
+    - name: Build Driver
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\build_zdriver.cmd prefast
+    - name: Package Artifacts
+      working-directory: ${{github.workspace}}
+      run: tar -czf driver_artifacts.tar.gz -C ${{github.workspace}}/bin .
+    - name: DriverBuildRelease
+      uses: softprops/action-gh-release@v1
+      # if: startsWith(github.ref, 'refs/tags/')
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        tag_name: driver-build
+        name: "driver-build"
+        body: 由 ${{ github.sha }}触发编译生成的Release。
+        draft: false
+        prerelease: false
+        files: |
+        driver_artifacts.tar.gz      
