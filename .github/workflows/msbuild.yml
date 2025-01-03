@@ -40,7 +40,7 @@ jobs:
         draft: false
         prerelease: false
         files: |
-        build_artifacts.tar.gz  
+          build_artifacts.tar.gz  
         
   build_driver:
     runs-on: windows-latest
@@ -70,4 +70,4 @@ jobs:
         draft: false
         prerelease: false
         files: |
-        driver_artifacts.tar.gz      
+          driver_artifacts.tar.gz      
