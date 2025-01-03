@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -26,6 +26,20 @@ jobs:
       shell: cmd
       working-directory: ${{github.workspace}}
       run: build\build_verbose.cmd
+    - name: Package Artifacts
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\package_artifacts.cmd
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./path/to/artifact_build.zip
+        asset_name: artifact_build.zip
+        asset_content_type: application/zip
+
   build_driver:
     runs-on: windows-latest
     steps:
@@ -40,3 +54,16 @@ jobs:
       shell: cmd
       working-directory: ${{github.workspace}}
       run: build\build_zdriver.cmd prefast
+    - name: Package Driver Artifacts
+      shell: cmd
+      working-directory: ${{github.workspace}}
+      run: build\package_driver_artifacts.cmd
+    - name: Upload Driver Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./path/to/artifact_driver.zip
+        asset_name: artifact_driver.zip
+        asset_content_type: application/zip
