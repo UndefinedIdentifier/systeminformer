@@ -140,7 +140,7 @@ NTSTATUS NTAPI PhpEnumVirtualMemoryAttributesCallback(
         PMEMORY_WORKING_SET_EX_INFORMATION page = &Blocks[i];
         PMEMORY_WORKING_SET_EX_BLOCK block = &page->VirtualAttributes;
 
-        if (!block->SharedOriginal)
+        if (block->Valid && !block->SharedOriginal)
         {
             PPH_IMAGE_MAPPED_FAILURE_ENTRY entry;
 
